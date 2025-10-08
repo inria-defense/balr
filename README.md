@@ -1,4 +1,4 @@
-# BA-LR: Binary-Attribute-based Likelihood Ratio estimation for speaker recognition
+# BA-LR: Binary-Attribute based likelihood ratio estimation for explainable speaker recognition
 
 ## Documentation
 
@@ -13,7 +13,7 @@ BALR works with a recent version of python (>=python 3.12).
 Clone the repository and install the project in your python environment, either using `pip`
 
 ```console
-git clone git@gitlab.inria.fr:inria-defense/balr.git
+git clone https://github.com/inria-defense/balr.git
 cd balr
 pip install --editable .
 ```
@@ -21,7 +21,7 @@ pip install --editable .
 or [uv](https://docs.astral.sh/uv/)
 
 ```console
-git clone git@gitlab.inria.fr:inria-defense/balr.git
+git clone https://github.com/inria-defense/balr.git
 cd balr
 uv sync
 ```
