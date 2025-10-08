@@ -1,0 +1,63 @@
+site_name: BA-LR
+site_description: Binary-Attribute-based Likelihood Ratio estimation for speaker recognition
+site_url: https://inria-defense.gitlabpages.inria.fr/balr
+nav:
+    - Home: index.md
+    - Datasets: datasets.md
+    - Embeddings: embeddings.md
+    - Binary Attributes: binary_attributes.md
+    - Trainer: trainer.md
+    - Losses: losses.md
+    - Samplers: samplers.md
+    - Scoring:
+        - LLR Scoring: scoring/scoring.md
+        - Beta-Bernouilli Scoring: scoring/beta.md
+        - Scorers: scoring/scorers.md
+theme:
+  name: 'material'
+  palette:
+  - media: (prefers-color-scheme)
+    toggle:
+      icon: material/lightbulb-auto
+      name: Switch to light mode
+  - media: '(prefers-color-scheme: light)'
+    scheme: default
+    primary: teal
+    accent: amber
+    toggle:
+      icon: material/lightbulb
+      name: Switch to dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: slate
+    primary: teal
+    accent: amber
+    toggle:
+      icon: material/lightbulb-outline
+      name: Switch to system preference
+  features:
+    - content.code.copy
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+repo_name: inria-defense/balr
+repo_url: https://github.com/inria-defense/balr
+
+extra_javascript:
+  - javascripts/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css
