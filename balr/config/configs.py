@@ -33,7 +33,7 @@ class EmbeddingsConfig:
 @dataclass
 class BinaryAutoEncoderConfig:
     _target_: str = "balr.binary_attributes.autoencoder.BinaryAttributeAutoEncoder"
-    checkpoint_path: str = "resources/models/BAE/mse/training_output_mse/BAE_mse.pt"
+    checkpoint_path: str = "resources/models/BAE/BAE_mse.pt"
     input_dim: int = 256
     internal_dim: int = 512
 

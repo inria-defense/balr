@@ -17,7 +17,7 @@ class BinaryAttributeAutoEncoder(BinaryAttributeEncoder):
 
 **Parameters**:
 
-* **checkpoint_path**: path to a trained model checkpoint. By default, uses the one provided in `resources/models/BAE/mse/training_output_mse/BAE_mse.pt`.
+* **checkpoint_path**: path to a trained model checkpoint. By default, uses the one provided in `resources/models/BAE/BAE_mse.pt`.
 * **input_dim**: the input dimension for the AutoEncoder (i.e. the embedding dimension).
 * **internal_dim**: the internal or output dimension for the AutoEncoder (i.e. the dimension of the binary-attribute representation).
 * **device**: the device to use the model on.
