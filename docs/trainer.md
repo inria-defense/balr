@@ -71,7 +71,6 @@ The BA-LR cli provides a `train` command to train a `BinaryAttributeEncoder` usi
 
     will train a `BinaryAttributeAutoEncoder` model on the `voxceleb2/train.csv` dataset and use the `voxceleb2/test.csv` dataset for validation. Results will be saved by default to the `./runs/train` directory. Training will run by default on the `cpu` device.
 
-
 !!! example
 
     ```bash
@@ -80,10 +79,11 @@ The BA-LR cli provides a `train` command to train a `BinaryAttributeEncoder` usi
 
     This more complex command will run training on the same datasets, but specifies the device (`cuda`) and the output directory, as well as modifies the trainer's config for `epochs` and `losses` parameters using hydra overrides.
 
-
 ## Distributed training
 
-It is possible to run training on multiple GPUs with pytorch's [torchrun](https://pytorch.org/docs/stable/elastic/run.html) launcher script.
+It is possible to run training on multiple GPUs with pytorch's [torchrun](https://pytorch.org/docs/stable/elastic/run.html) launcher script. Torchrun's `nproc_per_node` option lets you choose the number of GPU you wish to use, while the training script's `device` option lets you specify which GPUs should be used. When using `torchrun`, make sure to specify `--device cuda` (or `--device cuda:X,Y` if you want to specify the GPU ids to use).
+
+The [samplers](./samplers.md) used with the dataloaders must also support distributed sampling.
 
 !!! note
 
@@ -92,7 +92,16 @@ It is possible to run training on multiple GPUs with pytorch's [torchrun](https:
 !!! example
 
     ```bash
-    torchrun --nproc_per_node 2 balr/cli/main.py train resources/data/voxceleb2/train.csv resources/data/voxceleb2/test.csv --device cuda:0,1
+    torchrun --nproc_per_node 2 balr/cli/main.py train resources/data/voxceleb2/train.csv resources/data/voxceleb2/test.csv --device cuda
     ```
 
-    will run training on two GPUs. The [samplers](./samplers.md) used with the dataloaders must support distributed sampling.
+    will run training on two GPUs (the first two available).
+
+
+!!! example
+
+    ```bash
+    torchrun --nproc_per_node 4 balr/cli/main.py train resources/data/voxceleb2/train.csv resources/data/voxceleb2/test.csv --device cuda:4,5,6,7
+    ```
+
+    will run training on four GPUs (the last four available out of 8).
