@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "balr"
-version = "0.1.0"
+version = "2.0.0"
 description = "Binary-Attribute-based Likelihood Ratio estimation for speaker recognition"
 readme = "README.md"
 license = { text = "MIT" }
