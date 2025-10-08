@@ -1,0 +1,992 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Binary-Attribute-based Likelihood Ratio estimation for speaker recognition">
+      
+      
+      
+        <link rel="canonical" href="https://inria-defense.github.io/balr/scoring/scoring/">
+      
+      
+        <link rel="prev" href="../../samplers/">
+      
+      
+        <link rel="next" href="../beta/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.21">
+    
+    
+      
+        <title>LLR Scoring - BA-LR</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2a3383ac.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://unpkg.com/katex@0/dist/katex.min.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#likelihood-ratio-scoring" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="BA-LR" class="md-header__button md-logo" aria-label="BA-LR" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BA-LR
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              LLR Scoring
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2C5.13 2 2 5.13 2 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7M6 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H6zm13-8h-2l-3.2 9h1.9l.7-2h3.2l.7 2h1.9zm-2.15 5.65L18 15l1.15 3.65z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="amber"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/inria-defense/balr" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    inria-defense/balr
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="BA-LR" class="md-nav__button md-logo" aria-label="BA-LR" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BA-LR
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/inria-defense/balr" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    inria-defense/balr
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Datasets
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Embeddings
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../binary_attributes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Binary Attributes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Trainer
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../losses/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Losses
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../samplers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Samplers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Scoring
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Scoring
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    LLR Scoring
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    LLR Scoring
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#notation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-llr-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference LLR scoring
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reference LLR scoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameter-estimation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter estimation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dna-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNA scoring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#speech-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Speech scoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-likelihood-ratio-scorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Maximum Likelihood Ratio Scorer
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Maximum Likelihood Ratio Scorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameter-estimation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter estimation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../beta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Beta-Bernouilli Scoring
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scorers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Scorers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#notation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference-llr-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reference LLR scoring
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reference LLR scoring">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameter-estimation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter estimation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dna-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNA scoring
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#speech-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Speech scoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maximum-likelihood-ratio-scorer" class="md-nav__link">
+    <span class="md-ellipsis">
+      Maximum Likelihood Ratio Scorer
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Maximum Likelihood Ratio Scorer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameter-estimation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter estimation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scoring
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="likelihood-ratio-scoring">Likelihood Ratio Scoring</h1>
+<p>The BA-LR (Binary Attribute Likelihood Ratio) method introduced in <a href="https://github.com/LIAvignon/BA-LR">Imen Ben-Amor's thesis</a> consists in replacing typical speaker embeddings by vectors of binary attributes. Theses attributes are supposed to be independent; therefore a speaker identification scoring can be computed based on activation statistics of the attributes over a reference population. One of the hypothesis of the model is that each attribute encodes a specific caracteristic shared among a subset of speakers. It is therefore more than just a binarized version of speaker embeddings.</p>
+<p>By replacing the usual scoring in the high dimension space of speaker embeddings by a score that can be decomposed according to each binary attribute, the BA-LR method offers increased explicability.</p>
+<p>We propose two models for LLR scoring of binary attribute speaker embeddings. For the first model, each speaker either possesses or does not possess each attribute. For the second model, each speaker is instead assigned a probability of possessing or not possessing each attribute. The first model is therefore a special case of the second. The second model is more generic and is based on standard statistical methods.</p>
+<h2 id="notation">Notation</h2>
+<p>We write <span class="arithmatex">\(n\)</span> the number of binary attributes. The activations of the attributes are written as <span class="arithmatex">\(ba_i \in \{ 0, 1\}\)</span>. A recording <span class="arithmatex">\(x\)</span> is represented by the series of binary attribute activations $ x = [ ba_0, ..., ba_i, ..., ba_n ] $.</p>
+<p>For a set <span class="arithmatex">\(X\)</span> of <span class="arithmatex">\(p\)</span> recordings, we define the number of activations <span class="arithmatex">\(a_i = \sum_{j=1}^p 1_{ba_i^j = 1}\)</span> and non activations <span class="arithmatex">\(n_i = \sum_{j=1}^p 1_{ba_i^j = 0} = p - a_i\)</span> of the attribute <span class="arithmatex">\(ba_i\)</span> for the recordings of <span class="arithmatex">\(X\)</span>.</p>
+<p>To estimate the parameters of the scoring model, we have a training set of <span class="arithmatex">\(k\)</span> speakers. For each speaker <span class="arithmatex">\(l \in [1, k]\)</span>, we have a set <span class="arithmatex">\(X_l\)</span> of <span class="arithmatex">\(p_l\)</span> recodings.</p>
+<div class="arithmatex">\[
+X_l = [(a_1^l, n_1^l), .., (a_i^l, n_i^l), .., (a_k^l, n_k^k)]
+\]</div>
+<p>During inference for speaker verification, we have a set of enrollment recordings <span class="arithmatex">\(X_e\)</span> and a set of test recordings <span class="arithmatex">\(X_t\)</span>.</p>
+<div class="arithmatex">\[
+X_e = [(a_1^e, n_1^e), .., (a_i^e, n_i^e), .., (a_n^e, n_n^e)]\\
+X_t = [(a_1^t, n_1^t), .., (a_i^t, n_i^t), .., (a_n^t, n_n^t)]
+\]</div>
+<p>The hypothesis of independence between the attributes implies that the likelihood ratio can be factorized according to the attributes:</p>
+<div class="arithmatex">\[
+LR(X_e, X_t) = \prod_{i=1}^n LR_i(X_e, X_t) =  \prod_{i=1}^n LR_i((a_i^e, n_i^e), (a_i^t, n_i^t))
+\]</div>
+<h2 id="reference-llr-scoring">Reference LLR scoring</h2>
+<p>The reference scorers from <a href="https://github.com/LIAvignon/BA-LR">Imen Ben-Amor's thesis</a> model the distribution of attributes over a reference population with three parameters: <em>typicality</em>, <em>drop-out</em> and <em>drop-in</em>.</p>
+<p>The typicality <span class="arithmatex">\(T_i\)</span> of a binary attribute <span class="arithmatex">\(b_i\)</span> is the frequency of speaker pairs sharing the attribute in the reference population.</p>
+<p>The drop-out <span class="arithmatex">\(Dout_i\)</span> of attribute <span class="arithmatex">\(b_i\)</span> is defined as the probability of the attribute disappearing from the profile. This can be due either to a failure to detect the attribute when it is actually present in a recording, or to the attribute being genuinely absent from the recording despite being part of the speaker's profile.</p>
+<p>The drop-in is the probability of encountering noise leading to a false detection of the attribute in a recording. It is considered independent of the attribute.</p>
+<p>Two formulas for computing the LLR values for the trials are given: <em>DNA</em> and <em>Speech</em>.</p>
+<h3 id="parameter-estimation">Parameter estimation</h3>
+<p>Each speaker either possesses or does not possess each attribute. Thus, for each speaker <span class="arithmatex">\(l\)</span> and each attribute, we define the variable <span class="arithmatex">\(y^i_l \in {0, 1}\)</span> which is equal to 1 if the speaker possesses the attribute and 0 otherwise. <span class="arithmatex">\(y^i_l\)</span> is a latent variable that is never observed.</p>
+<p>The model approximates the latent variable <span class="arithmatex">\(y^i_l\)</span> with the speaker's profile <span class="arithmatex">\(P_l(BA_i)\)</span>.</p>
+<div class="arithmatex">\[
+P_l(BA_i) = 1_{a_i^l &gt; 0}
+\]</div>
+<p>This gives us an estimator of the typicality corresponding to the proportion of speaker pairs who both have a profile equal to 1.</p>
+<div class="arithmatex">\[
+\hat{T_i} = \frac{N_c(P(BA_i)=1)}{N_c}
+\]</div>
+<p>where <span class="arithmatex">\(N_c\)</span> is the number of speaker pairs and <span class="arithmatex">\(N_c(P(BA_i)=1)\)</span> is the number of speaker pairs who both have a profile equal to 1. If we write <span class="arithmatex">\(K\)</span> the number of speakers and <span class="arithmatex">\(K_i^1 = \sum_{l=1}^K 1_{P_l(BA_i) = 1} = \sum_{j=1}^K 1_{a_i^l &gt; 0}\)</span> the number of speakers having a profile equal to 1, we have:</p>
+<div class="arithmatex">\[
+\hat{T_i} = \frac{K_i^1 (K_i^1 -1)}{K (K - 1)}
+\]</div>
+<p>The dropout estimator <span class="arithmatex">\(\hat{Dout_i}\)</span> relies on the the profile <span class="arithmatex">\(P_l(BA_i)\)</span> also. We estimate the dropout for each speaker having the attribute in its profile <span class="arithmatex">\(\hat{Dout_i^l}\)</span> as well as an average over the speakers.</p>
+<div class="arithmatex">\[
+\hat{Dout_i^l} = \frac{n_i^l}{a_i^l + n_i^l} \\
+\hat{Dout_i} =  \frac{\\sum_{l = 1}^K \hat{Dout_i^l}  1_{P_l(BA_i) =1}}{K_i^1}
+\]</div>
+<p>The drop-in probability <span class="arithmatex">\(P_{din}\)</span> is assumed to depend on the typicality of the attribute and on a parameter <span class="arithmatex">\(Din\)</span> that is independent of the attribute.</p>
+<div class="arithmatex">\[
+P_{din, i} = Din \times T_i
+\]</div>
+<p>The parameter <span class="arithmatex">\(Din\)</span> is selected so as to minimize the speaker verification error (measured in terms of Cllr).</p>
+<h3 id="dna-scoring">DNA scoring</h3>
+<p>This scoring is based on the following assumptions:</p>
+<ul>
+<li>drop-in and drop-out occur only in test recordings;</li>
+<li>the profile established from enrollment recordings is accurate;</li>
+<li>the drop-in probability is represented by <span class="arithmatex">\(P_{din, i} = Din \times T_i\)</span>, whereas typicality does not affect the probability of no drop-in.</li>
+</ul>
+<p>The value of the likelihood ratio depends solely on the enrollment and test profiles. <strong>This scoring assumes there are only one enrollment recording and one test recording</strong>.</p>
+<div class="arithmatex">\[
+LR_i((a_i^e, n_i^e), (a_i^t, n_i^t)) = LR_i(P_e(BA_i), P_t(BA_i))
+\]</div>
+<p>Thus,</p>
+<ul>
+<li><span class="arithmatex">\(LR_i(0,1) = \frac{Dout_i}{T_i}\)</span></li>
+<li><span class="arithmatex">\(LR_i(0,0) = \frac{1}{T_i ( 1 - Din + Dout_i)}\)</span></li>
+<li><span class="arithmatex">\(LR_i(1,1) = \frac{1}{T_i ( 1 - Dout_i + Din T_i)}\)</span></li>
+<li><span class="arithmatex">\(LR_i(1,0) = \frac{Din T_i}{T_i ( Din T_i + 1  - Din)}\)</span></li>
+</ul>
+<p>We make the cases <span class="arithmatex">\(01\)</span> and <span class="arithmatex">\(10\)</span> equal with the following transformation <span class="arithmatex">\(LR_i(0,1) = LR_i(1,0) = \frac{LR_i(0,1)+ LR_i(1,0)}{2}\)</span>.</p>
+<h3 id="speech-scoring">Speech scoring</h3>
+<p>This scoring is based on the following assumptions:</p>
+<ul>
+<li>drop-in and drop-out can occur in both enrollment and test recordings;</li>
+<li>drop-in and drop-out events in enrollment recordings are independent of those in test recordings;</li>
+<li>the drop-in probability is represented by <span class="arithmatex">\(P_{din, i} = Din \times T_i\)</span>, whereas typicality does not affect the probability of no drop-in.</li>
+</ul>
+<p>The value of the likelihood ratio still depends solely on the enrollment and test profiles. <strong>This scoring assumes there are only one enrollment recording and one test recording</strong>.</p>
+<div class="arithmatex">\[
+LR_i((a_i^e, n_i^e), (a_i^t, n_i^t)) = LR_i(P_e(BA_i), P_t(BA_i))
+\]</div>
+<p>Thus,</p>
+<ul>
+<li>$LR_i(0,1) = \frac{ (1 -Din ) Din T_i + Dout_i (1 - Dout_i) }{ T_i ( (1-Din) Din T_i + Dout_ i (1 - Dout_i)  + 1 + Din T_i Dout_i ) } $</li>
+<li>$LR_i(0,0) = \frac{1 + Dout_i^2}{T_i ( 2 Dout_i (1 - Din) + Dout_i^2 + (1 - Din)^2)} $</li>
+<li>$LR_i(1,1) = \frac{1 + (Din T_i)^2 }{T_i ( 2 Din T_i (1 - Dout_i) + ( Din T_i)^2 + (1 - Dout_i )^2 )} $</li>
+<li>$LR_i(1,0) = \frac{ (1- Din) Din T_i + Dout_i (1 - Dout_i)}{ T_i ( (1-Din) Din T_i + Dout_i (1- Dout_i) + 1 + Din T_i Dout_i)  } $</li>
+</ul>
+<p>We observe that <span class="arithmatex">\(LR_i(0,1) = LR_i(1,0)\)</span>.</p>
+<h2 id="maximum-likelihood-ratio-scorer">Maximum Likelihood Ratio Scorer</h2>
+<p>The Maximum Likelihood Ratio scorer has the same objectives as the reference model but is based on standard statistical methods. The MaxLLR scorer also models the distribution of attributes over a reference population with the same three parameters (typicality, drop-out and drop-in), but instead of assuming that each speaker either possesses or does not possess each attribute, it assigns each speaker a probability of possessing or not possessing each attribute.</p>
+<p>To avoid confusion, the parameters (typicality, drop-out and drop-in) are renamed (<span class="arithmatex">\(f\)</span>, <span class="arithmatex">\(p\)</span> and <span class="arithmatex">\(q\)</span>).</p>
+<p>For an attribute <span class="arithmatex">\(b_i\)</span>, the population frequency <span class="arithmatex">\(f_i\)</span> is defined as the probability that a speaker possesses the attribute. By definition, <span class="arithmatex">\(f_i = \mathbb{E}[y^i_l]\)</span>.
+We denote <span class="arithmatex">\(p_i\)</span> as the activation frequency of the attribute in a recording for speakers who possess the attribute, and <span class="arithmatex">\(q_i\)</span> as the activation frequency of the attribute in a recording for speakers who do not possess the attribute.</p>
+<h3 id="parameter-estimation_1">Parameter estimation</h3>
+<p>We propose here an estimation based on the maximum likelihood principle. Since the likelihood expression involves the latent variables <span class="arithmatex">\(y^l_i\)</span>, maximizing the likelihood requires the use of the Expectation-Maximization method.</p>
+<p>For a speaker <span class="arithmatex">\(l\)</span>, the likelihood of the attribute activations conditioned on <span class="arithmatex">\(y^l\)</span> is given by:</p>
+<div class="arithmatex">\[
+\mathbb{L}((a^{l}, n^{l}) \mid y^l) = p^a (1-p)^n \cdot \mathbf{1}_{y^l = 1} +  q^a (1-q)^n \cdot \mathbf{1}_{y^l = 0}
+\]</div>
+<p>We denote <span class="arithmatex">\(\theta = (f, p, q)\)</span>. The update of <span class="arithmatex">\(\theta\)</span> is given by:</p>
+<div class="arithmatex">\[
+\theta_{m+1} = \arg\max_{\theta} \sum_{l=1}^k \mathbb{E}_{y^l \mid (a^l, n^l), \theta_m}\left[ \log\left( \mathbb{L}((a^l, n^l), y^l \mid \theta_m) \right) \right]
+\]</div>
+<p>We denote <span class="arithmatex">\(\tilde{f}^l = \mathbb{P}(y^l = 1 \mid (a^l, n^l), \theta_m)\)</span>, the posterior probability that speaker <span class="arithmatex">\(l\)</span> possesses the attribute. Thus, we have:</p>
+<div class="arithmatex">\[
+\theta_{m+1} = \arg\max_{\theta} \sum_{l=1}^k \left[ \tilde{f}^l \log( \mathbb{P}((a^l , n^l), y^l = 1 \mid \theta_m)) + (1-\tilde{f}^l) \log( \mathbb{P}((a^l , n^l), y^l = 0 \mid \theta_m)) \right]
+\]</div>
+<p>We can determine <span class="arithmatex">\(\tilde{f}^l\)</span>:</p>
+<div class="arithmatex">\[
+\tilde{f}^l = \mathbb{P}(y^l=1 \mid (a^l , n^l), \theta_m) = \frac{\mathbb{P}((a^l,n^l), y^l=1 \mid \theta_m)}{ \mathbb{P}( (a^l, n^l) \mid \theta_m)}
+\]</div>
+<div class="arithmatex">\[
+\tilde{f}^l = \frac{ f \cdot \mathbb{P}((a^l, n^l) \mid y^l=1, \theta_m) }{ f \cdot \mathbb{P}((a^l, n^l) \mid y^l=1, \theta_m) + (1-f) \cdot \mathbb{P}((a^l, n^l) \mid y^l=0, \theta_m) }
+\]</div>
+<p>By substituting <span class="arithmatex">\(\tilde{f}^l\)</span> into the expression for the log-likelihood and differentiating with respect to the parameters <span class="arithmatex">\(f, p\)</span>, and <span class="arithmatex">\(q\)</span>, we obtain the parameter update formulas:</p>
+<div class="arithmatex">\[
+\hat{f} = \frac{\sum_l \tilde{f}^l}{k}
+\]</div>
+<div class="arithmatex">\[
+\hat{p} = \frac{\sum_l a^l \tilde{f}^l}{\sum_l (a^l + n^l) \tilde{f}^l}
+\]</div>
+<div class="arithmatex">\[
+\hat{q} = \frac{\sum_l a^l (1-\tilde{f}^l)}{\sum_l (a^l + n^l)(1- \tilde{f}^l)}
+\]</div>
+<p>The initialization of the EM algorithm can be crucial. For now, we naively initialize the algorithm with <span class="arithmatex">\(f_0 = 0.5\)</span>, <span class="arithmatex">\(p_0 = 0.9\)</span>, and <span class="arithmatex">\(q_0 = 0.1\)</span>. <strong>Indeed, the interpretation of <span class="arithmatex">\(f\)</span> implies that <span class="arithmatex">\(p &gt; q\)</span>.</strong></p>
+<h3 id="scoring">Scoring</h3>
+<p>We define the likelihood of the observations based on the model parameters:</p>
+<div class="arithmatex">\[
+p((a, n) | f, p, q) = f p^a (1-p)^n + (1-f) q^a (1-q)^n
+\]</div>
+<p>This allows us to define the likelihood ratio:</p>
+<div class="arithmatex">\[
+LR((a^e, n^e), (a^t, n^t)) = \frac{p((a^e + a^t, n^e + n^t) | f, p, q)}{p((a^e, n^e) | f, p, q) \cdot p((a^t, n^t) | f, p, q)}
+\]</div>
+<p>When <span class="arithmatex">\(n^e + a^e = n^t + a^t = 1\)</span>, we have the following simplified formulas:</p>
+<ul>
+<li><span class="arithmatex">\(LR(0,0) = LR((0,1),(0,1)) = \frac{f (1-p)^2 + (1-f) (1-q)^2}{(f (1-p) + (1-f) (1-q))^2}\)</span></li>
+<li><span class="arithmatex">\(LR(0,1) = LR(1,0) = LR((0,1),(1,0)) = \frac{f p (1-p) + (1-f) q (1-q)}{(f (1-p) + (1-f)(1-q)) \cdot (f p + (1-f) q)}\)</span></li>
+<li><span class="arithmatex">\(LR(1,1) = LR((1,0),(1,0)) = \frac{f p^2 + (1-f) q^2}{(f p + (1-f) q)^2}\)</span></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/katex.min.js"></script>
+      
+        <script src="https://unpkg.com/katex@0/dist/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
