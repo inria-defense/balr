@@ -88,6 +88,10 @@ id07531/00142.wav,id07531
 
 Calling `AudioDataset.from_path` with the path of this csv file will return a Dataset of 10 samples, each sample having an audio file and being labeled with the speaker id from the csv file.
 
+!!! warning
+
+    The csv file describing a dataset can contain absolute or relative paths for the `audio`, `embedding` or `binary_attributes` file paths. **If these columns contain relative paths, they must be relative to the directory that contains the csv file.** In the exampe above, the various speaker directories `id07417`, `id03184`, etc. must be in the same directory as the csv file.
+
 ## Vector files
 
 By default, the `AudioDataset` class will try to look for and load two types of vector files for each sample in the dataset:
