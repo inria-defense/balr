@@ -1,4 +1,4 @@
-# BA-LR: Binary-Attribute based Likelihood Ratio estimation for speaker recognition
+# BA-LR: Binary-Attribute based Likelihood Ratio estimation for explainable speaker recognition
 
 This library contains tools which can be used for explainable deep speaker recognition and modeling based on voice attributes. It is based on the [doctorate work](https://github.com/LIAvignon/BA-LR) of Imen Ben Amor but offers improved models and utilities for binary-attribute based speaker modeling.
 

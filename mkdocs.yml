@@ -1,6 +1,6 @@
 site_name: BA-LR
 site_description: Binary-Attribute-based Likelihood Ratio estimation for speaker recognition
-site_url: https://inria-defense.gitlabpages.inria.fr/balr
+site_url: https://inria-defense.github.io/balr/
 nav:
     - Home: index.md
     - Datasets: datasets.md
