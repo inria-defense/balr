@@ -46,7 +46,7 @@ To perform embedding extraction on a set of audio files, run
 balr extract /path/to/dataset
 ```
 
-That command will look for all audio files in the directory, and extract embeddings using the default embedding model ([Wespeaker](https://github.com/wenet-e2e/wespeaker)). Embeddings for each audio file will be saved as numpy arrays in `.txt` files matching the names of the audio file they correspond to.
+That command will look for all audio files in the directory, and extract embeddings using the default embedding model ([Wespeaker](https://github.com/wenet-e2e/wespeaker)). Embeddings for each audio file will be saved as numpy arrays in pickle `.pkl` files matching the names of the audio file they correspond to.
 
 #### Binarization of embeddings
 
@@ -56,7 +56,7 @@ To perform binarization of embeddings for a set of audio files, run
 balr binarize /path/to/dataset
 ```
 
-That command will load embedding files in the dataset and perform binary attribute encoding using the default Binary Attribute Encoder (`AutoEncoder` using the saved checkpoint in `resources/model/binary_encoder`). BA vectors for each audio file will be saved as numpy arrays in `.txt` files matching the names of the embedding file they correspond to.
+That command will load embedding files in the dataset and perform binary attribute encoding using the default Binary Attribute Encoder (`AutoEncoder` using the saved checkpoint in `resources/model/binary_encoder`). BA vectors for each audio file will be saved as numpy arrays in pickle `.pkl` files matching the names of the embedding file they correspond to.
 
 #### Training of the Binary Attribute Encoder
 
