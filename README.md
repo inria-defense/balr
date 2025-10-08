@@ -91,3 +91,19 @@ We recommend using [uv](https://docs.astral.sh/uv/) as a package and project man
 Please format your code before contributing. Format your code with [black](https://github.com/psf/black): `uv run black --config ./pyproject.toml .`.
 
 We recommand using [pre-commit](https://pre-commit.com/) to make sure your code is formatted before each commit. Run `uv run pre-commit install` from the root directory to install pre-commit hooks.
+
+## Citations
+
+This library is based on the [doctorate work](https://github.com/LIAvignon/BA-LR) of Imen Ben Amor but offers improved models and utilities for binary-attribute based speaker modeling.
+
+If you use BALR, please use the following citations
+
+```BibTex
+@inproceedings{Ben-amor2024,
+  title={Extraction of interpretable and shared speaker-specific speech attributes
+through binary auto-encoder},
+  author={Imen Ben-Amor, Jean-Francois Bonastre, Salima Mdhaffar},
+  booktitle={Interspeech2024},
+  year={2024}
+}
+```
