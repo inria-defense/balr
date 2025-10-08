@@ -6,7 +6,7 @@
 
 ## Install
 
-BALR works with a recent version of python (>=python 3.12).
+BALR requires a recent version of python: ![python_version](https://img.shields.io/badge/Python-%3E=3.12-blue).
 
 ### Install from github
 
